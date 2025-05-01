@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Men's Shirt & T-Shirt Store</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+    }
+    header, footer {
+      background-color: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .container {
+      padding: 20px;
+    }
+    .product {
+      display: inline-block;
+      background: white;
+      border: 1px solid #ccc;
+      margin: 10px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .btn {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .cart-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    form input, form textarea {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Men's Shirt & T-Shirt Store</h1>
+    <nav>
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('shop')">Shop</a>
+      <a onclick="showPage('cart')">Cart</a>
+    </nav>
+  </header>
+
+  <!-- Home Page -->
+  <div class="container" id="home">
+    <h2>Welcome to Our Store</h2>
+    <p>Discover stylish shirts and T-shirts for men. Click below to start shopping.</p>
+    <button class="btn" onclick="showPage('shop')">Start Shopping</button>
+  </div>
+
+  <!-- Shop Page -->
+  <div class="container" id="shop" style="display:none">
+    <h2>Shop</h2>
+    <div id="productList"></div>
+    <button class="btn" onclick="showPage('cart')">Go to Cart</button>
+  </div>
+
+  <!-- Cart Page -->
+  <div class="container" id="cart" style="display:none">
+    <h2>Your Cart</h2>
+    <div id="cartItems"></div>
+    <p><strong>Total: $<span id="total">0</span></strong></p>
+    <button class="btn" onclick="showPage('order')">Proceed to Order</button>
+  </div>
+
+  <!-- Order Page -->
+  <div class="container" id="order" style="display:none">
+    <h2>Enter Your Details</h2>
+    <form onsubmit="submitOrder(event)">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="tel" id="mobile" placeholder="Mobile Number" required />
+      <textarea id="address" placeholder="Address" required></textarea>
+      <button class="btn" type="submit">Submit Order</button>
+    </form>
+  </div>
+
+  <!-- Confirmation Page -->
+  <div class="container" id="confirmation" style="display:none">
+    <h2>Order Placed Successfully!</h2>
+    <p>Thank you, <strong><span id="customerName"></span></strong>! Your order has been placed.</p>
+    <p><strong>Mobile:</strong> <span id="customerMobile"></span></p>
+    <p><strong>Address:</strong> <span id="customerAddress"></span></p>
+    <div id="orderSummary"></div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Men's Clothing Store</p>
+  </footer>
+
+  <script>
+    const products = [
+      { name: 'Classic Shirt', price: 25, image: 'images/download.jpeg' },
+ 
+      { name: 'Cool T-Shirt', price: 15, image: 'images/download(1).jpeg' },
+      { name: 'Formal Shirt', price: 30, image: 'images/download 2.jpeg' },
+      { name: 'Casual T-Shirt', price: 18, image: 'images/download 3.jpeg' },
+      { name: 'Slim Fit Shirt', price: 28, image: 'images/download 4.jpeg' },
+      { name: 'Graphic T-Shirt', price: 20, image: 'images/download 5.jpeg' },
+      { name: 'Denim Shirt', price: 35, image: 'images/download 6.jpeg' },
+      { name: 'Plain T-Shirt', price: 12, image: 'images/download 7.jpeg' },
+      { name: 'Party Shirt', price: 40, image: 'images/download 8.jpeg' },
+      { name: 'V-Neck T-Shirt', price: 17, image: 'images/download 9.jpeg' }
+    ];
+
+    let cart = [];
+
+    function showPage(pageId) {
+      document.querySelectorAll('.container').forEach(page => page.style.display = 'none');
+      document.getElementById(pageId).style.display = 'block';
+      if (pageId === 'cart') displayCart();
+    }
+
+    function addToCart(name) {
+      const product = products.find(p => p.name === name);
+      cart.push(product);
+      alert(`${name} added to cart.`);
+    }
+
+    function displayCart() {
+      const cartItems = document.getElementById('cartItems');
+      cartItems.innerHTML = '';
+      let total = 0;
+      cart.forEach(item => {
+        cartItems.innerHTML += `<div class="cart-item"><img src="${item.image}" alt=""> <div>${item.name} - $${item.price}</div></div>`;
+        total += item.price;
+      });
+      document.getElementById('total').innerText = total;
+    }
+
+    function loadProducts() {
+      const productList = document.getElementById('productList');
+      products.forEach(p => {
+        productList.innerHTML += `
+          <div class="product">
+            <img src="${p.image}" alt="${p.name}" />
+            <h3>${p.name}</h3>
+            <p>$${p.price}</p>
+            <button class="btn" onclick="addToCart('${p.name}')">Add to Cart</button>
+          </div>`;
+      });
+    }
+
+    function submitOrder(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const mobile = document.getElementById('mobile').value;
+      const address = document.getElementById('address').value;
+      document.getElementById('customerName').innerText = name;
+      document.getElementById('customerMobile').innerText = mobile;
+      document.getElementById('customerAddress').innerText = address;
+
+      const summary = document.getElementById('orderSummary');
+      summary.innerHTML = '<h3>Order Summary:</h3>';
+      cart.forEach(item => {
+        summary.innerHTML += `<p><img src="${item.image}" width="50"> ${item.name} - $${item.price}</p>`;
+      });
+
+      showPage('confirmation');
+    }
+
+    window.onload = loadProducts;
+  </script>
+</body>
+</html>
